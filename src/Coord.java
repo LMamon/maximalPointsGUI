@@ -19,7 +19,7 @@ public class Coord implements Comparable<Coord> {
     }
 
     public boolean isLowerLeft(Coord point2) {
-        return point2.x < this.x && point2.y < this.y;
+        return point2.y < this.y && point2.x < this.x;
     }
 
     @Override
