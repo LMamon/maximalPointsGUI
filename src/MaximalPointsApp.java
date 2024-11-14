@@ -1,4 +1,4 @@
-/*defines scene that contains the pane which is created with the initial set of
+/*defines scene that conjavjavac tains the pane which is created with the initial set of
 points that are read in from the points.txt file
 Louis, M
  */
@@ -24,7 +24,7 @@ public class MaximalPointsApp extends Application {
     private ArrayList<Coord> readPointsFile() throws IOException {
         ArrayList<Coord> points = new ArrayList<>();
         //reader
-        try (BufferedReader reader = new BufferedReader(new FileReader("points.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/points.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split("\\s");
@@ -39,4 +39,5 @@ public class MaximalPointsApp extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }
