@@ -3,16 +3,18 @@ comparison based on x coordinate and provides methods for access and comparison 
 Louis, M.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Coord implements Comparable<Coord> {
     final double x, y;
-
+    //constructor
     public Coord(double x, double y) {
         this.x = x;
         this.y = y;
     }
-
+    //getters
     public double xCoord(){
         return this.x;
     }
@@ -22,8 +24,7 @@ public class Coord implements Comparable<Coord> {
 
     //returns lower point
     public boolean isLower(Coord point2) {
-        return this.yCoord() < point2.yCoord() ||
-                (this.yCoord() == point2.yCoord() && this.xCoord() < point2.xCoord());
+        return point2.xCoord() < this.xCoord() && point2.yCoord() < this.yCoord();
     }
 
     @Override
@@ -31,20 +32,31 @@ public class Coord implements Comparable<Coord> {
         return Double.compare(this.xCoord(), o.xCoord());
     }
 
-    //sort list based on polarAngle
-    public static List<Coord> sortPoints(List<Coord> points, Coord reference){
-        points.sort((a, b) -> Double.compare(polarAngle(reference,a), polarAngle(reference, b)));
-        return points;
+    public static Coord leftMost(List<Coord> points) {
+        Coord p1 = points.get(0);
+        for (Coord point : points) { //if point is left most assign it to p1
+            if (point.xCoord() < p1.xCoord() || (point.xCoord() == p1.xCoord() && point.yCoord() < p1.yCoord())) {
+                p1 = point;
+            }
+        }
+        return p1;
     }
-    //calculate polar angle
-    private static double polarAngle(Coord origin, Coord point){
-        return Math.atan2(point.y - origin.y, point.x - origin.x);
-    }
-
-    //returns cross product
-    public static double crossProduct(Coord p1, Coord p2, Coord p3){
-        return (p2.xCoord() - p1.xCoord()) * (p3.yCoord() - p1.yCoord() - (p2.yCoord() - p1.yCoord()) *
-                (p3.xCoord() - p1.xCoord()));
+    //calculate maximal points
+    public static ArrayList<Coord> findMaximals(ArrayList<Coord> points) {
+        ArrayList<Coord> maximals = new ArrayList<>();
+        //sort based on x
+        points.sort((p1, p2) -> Double.compare(p2.xCoord(), p1.xCoord()));
+        //minY to track lowest y
+        double minY = Double.POSITIVE_INFINITY;
+        for (Coord p : points) {
+            if (p.yCoord() < minY) { //if current point has lower y than previous minimum add to maximals
+                maximals.add(p);
+                minY = p.yCoord();
+            }
+        }
+        //added maximals from highest x to lowest x, reverse the list to sort
+        Collections.reverse(maximals);
+        return maximals;
     }
 
     //returns distance between 2points
@@ -52,5 +64,3 @@ public class Coord implements Comparable<Coord> {
         return Math.hypot(p2.xCoord() - p1.xCoord(), p2.yCoord() - p1.yCoord());
     }
 }
-
-

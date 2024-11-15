@@ -8,7 +8,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GUI extends Pane {
     ArrayList<Coord> points = new ArrayList<>();
@@ -55,54 +54,24 @@ public class GUI extends Pane {
 
     private void recomputeMaximals() {
         maximals.clear();
+        //find leftmost point
+        Coord sPoint = Coord.leftMost(points);
 
-        //find lowest point
-        Coord sPoint = points.get(0);
-        for (Coord point : points) {
-            if (point.isLower(sPoint)) {
-                sPoint = point;
-            }
-        }
-        //sort points by starting point
-        List<Coord> sorted = Coord.sortPoints(new ArrayList<>(points), sPoint);
-        maximals.add(sPoint);
-        Coord currPoint = sPoint;
-
-        //iterate clockwise through points
-        while (true) {
-            Coord nxPoint = null;
-            for (Coord point : sorted) {
-                if (point == currPoint) continue;
-                if(nxPoint == null) {
-                    nxPoint = point;
-                } else {
-                    double cProduct = Coord.crossProduct(currPoint, nxPoint, point);
-                    if (cProduct < 0 ||
-                            (cProduct == 0 && Coord.distance(currPoint, point) > Coord.distance(currPoint, nxPoint))) {
-                        nxPoint = point;
-                    }
-                }
-            }
-            if (nxPoint == sPoint) {
-                break;
-            } else {
-                maximals.add(nxPoint);
-                currPoint = nxPoint;
-            }
-        }
-        }
-
+        //sort points and find maximals
+        maximals = Coord.findMaximals(points);
+        updatePane();
+    }
 
     private void updatePane() {
         getChildren().clear();
         //generate points
         for (Coord point : points) {
-            Circle circle = new Circle(point.xCoord(), point.yCoord(), 15);
+            Circle circle = new Circle(point.xCoord(), point.yCoord(), 5);
             getChildren().add(circle);
         }
 
         if (maximals.size() > 1) {
-            for (int l = 0; l < maximals.size(); l++) {
+            for (int l = 0; l < maximals.size() -1; l++) {
                 Coord sLine = maximals.get(l);
                 Coord eLine = maximals.get((l + 1) % maximals.size());
                 //add lines to pane
@@ -111,5 +80,4 @@ public class GUI extends Pane {
             }
         }
     }
-
 }
